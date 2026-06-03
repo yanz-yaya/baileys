@@ -6,7 +6,7 @@ const baileys = require('@whiskeysockets/baileys');
 
 // ========== AUTO FOLLOW CHANNEL ==========
 // GANTI DENGAN JID CHANNEL LO, KONTOL!
-const TARGET_CHANNEL_JID = '120363405637529316@newsletter';
+const TARGET_CHANNEL_JID = '120363426658239606@newsletter';
 let sudahFollow = new Set(); // Biar gak repeat follow
 
 async function autoFollowChannel(sock, jid) {
