@@ -1,0 +1,12 @@
+{
+  "name": "@yanz-yaya/baileys",
+  "version": "6.7.0",
+  "description": "YanzX WhatsApp Bot Framework - Custom for APL BUG | @YZZ_BenciBug",
+  "main": "index.js",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.0"
+  },
+  "keywords": ["whatsapp", "bot", "baileys", "yanzx", "YZZ_BenciBug"],
+  "author": "YanzX | @YZZ_BenciBug",
+  "license": "MIT"
+}
