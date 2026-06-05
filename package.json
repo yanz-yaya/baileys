@@ -4,7 +4,8 @@
   "description": "YanzX WhatsApp Bot Framework - Custom for APL BUG | @YZZ_BenciBug",
   "main": "index.js",
   "dependencies": {
-    "@whiskeysockets/baileys": "^6.7.0"
+    "@whiskeysockets/baileys": "^6.7.0",
+    "chalk": "^4.1.2"
   },
   "keywords": ["whatsapp", "bot", "baileys", "yanzx", "YZZ_BenciBug"],
   "author": "YanzX | @YZZ_BenciBug",
