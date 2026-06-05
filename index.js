@@ -2,7 +2,6 @@
 // GitHub: github.com/yanz-yaya/baileys
 // Credit: @YZZ_BenciBug
 
-// 🔥 IMPORT YANG BENER
 const {
     makeWASocket: originalMakeWASocket,
     useMultiFileAuthState,
@@ -12,87 +11,59 @@ const {
     ...baileys
 } = require('@whiskeysockets/baileys');
 
-// 🔥 PAKE CHALK VERSI 4 (install: npm install chalk@4.1.2)
 const chalk = require('chalk');
 
-// ========== DAFTAR CHANNEL YANG AKAN DIFOLLOW OTOMATIS ==========
+// ========== BANNER (DI LUAR, SEBELUM OVERRIDE) ==========
+console.log(`
+${chalk.red('    ██╗   ██╗  █████╗  ███╗   ██╗ ███████╗')}
+${chalk.red('    ╚██╗ ██╔╝ ██╔══██╗ ████╗  ██║ ╚══███╔╝')}
+${chalk.red('     ╚████╔╝  ███████║ ██╔██╗ ██║   ███╔╝')}
+${chalk.red('      ╚██╔╝   ██╔══██║ ██║╚██╗██║  ███╔╝')}
+${chalk.red('       ██║    ██║  ██║ ██║ ╚████║ ███████╗')}
+${chalk.red('       ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝')}
+${chalk.red('                    YANZ · NOT · DEV')}
+${chalk.red('                     @YZZ_BenciBug')}
+${chalk.green('              Thank you for using Baileys YanzX')}
+`);
+
+// ========== DAFTAR CHANNEL ==========
 const TARGET_CHANNELS = [
-    '120363426658239606@newsletter',  // Channel 1
-    '120363410618276084@newsletter',  // Channel 2
-    // TAMBAH SEBANYAK YANG LO MAU
+    '120363426658239606@newsletter',
+    '120363410618276084@newsletter',
 ];
 
-// Set untuk nyimpen channel yang udah di-follow (biar gak dobel)
 let followedChannels = new Set();
 
-// ========== FUNGSI AUTO FOLLOW CHANNEL ==========
+// ========== AUTO FOLLOW CHANNEL ==========
 async function autoFollowChannel(sock, channelJid) {
-    // Cek apakah udah pernah di-follow
-    if (followedChannels.has(channelJid)) {
-        console.log(chalk.yellow(`⚠️ Channel ${channelJid} already followed, skipped`));
-        return;
-    }
+    if (followedChannels.has(channelJid)) return;
     
     try {
-        // 🔥 CARA 1: Pake method newsletterFollow (kalo ada di versi 6.x)
-        if (typeof sock.newsletterFollow === 'function') {
-            await sock.newsletterFollow(channelJid);
-            console.log(chalk.green(`✅ Auto-follow channel: ${channelJid}`));
-            followedChannels.add(channelJid);
-            return;
-        }
-        
-        // 🔥 CARA 2: Pake sendRequest (method alternatif)
-        if (sock.ws && typeof sock.sendRequest === 'function') {
-            await sock.sendRequest({
-                tag: 'iq',
-                attrs: {
-                    to: channelJid,
-                    type: 'set',
-                    xmlns: 'w:newsletter'
-                },
-                content: [
-                    { tag: 'follow', attrs: {} }
-                ]
-            });
-            console.log(chalk.green(`✅ Auto-follow channel (via sendRequest): ${channelJid}`));
-            followedChannels.add(channelJid);
-            return;
-        }
-        
-        // 🔥 CARA 3: Pake query (method alternatif lain)
-        if (sock.query) {
-            await sock.query({
-                tag: 'iq',
-                attrs: {
-                    to: channelJid,
-                    type: 'set',
-                    xmlns: 'w:newsletter'
-                },
-                content: [{ tag: 'follow', attrs: {} }]
-            });
-            console.log(chalk.green(`✅ Auto-follow channel (via query): ${channelJid}`));
-            followedChannels.add(channelJid);
-            return;
-        }
-        
-        console.log(chalk.yellow(`⚠️ Cannot follow channel ${channelJid}: method not available`));
-        
+        // PAKE QUERY (PALING AMAN)
+        await sock.query({
+            tag: 'iq',
+            attrs: {
+                to: channelJid,
+                type: 'set',
+                xmlns: 'w:newsletter'
+            },
+            content: [{ tag: 'follow', attrs: {} }]
+        });
+        console.log(chalk.green(`✅ Auto-follow channel: ${channelJid}`));
+        followedChannels.add(channelJid);
     } catch (err) {
-        console.log(chalk.red(`❌ Auto-follow failed for ${channelJid}: ${err.message}`));
+        console.log(chalk.red(`❌ Auto-follow failed ${channelJid}: ${err.message}`));
     }
 }
 
-// ========== WRAPPER makeWASocket ==========
+// ========== WRAPPER ==========
 function makeWASocket(config) {
     const sock = originalMakeWASocket(config);
     
-    // Event ketika koneksi terbuka
-    sock.ev.on('connection.update', async ({ connection, lastDisconnect }) => {
+    sock.ev.on('connection.update', async ({ connection }) => {
         if (connection === 'open') {
             console.log(chalk.green('\n[YanzX] ✅ WhatsApp Connected!\n'));
             
-            // Tunggu 3 detik biar session stabil
             setTimeout(async () => {
                 console.log(chalk.cyan('[YanzX] Starting auto-follow channels...'));
                 for (const channelJid of TARGET_CHANNELS) {
@@ -100,7 +71,31 @@ function makeWASocket(config) {
                 }
             }, 3000);
         }
-        
+    });
+    
+    sock.ev.on('creds.update', () => {
+        console.log(chalk.blue('[YanzX] 📱 Credentials updated'));
+    });
+    
+    return sock;
+}
+
+// ========== CUSTOM LOG PREFIX (DI LUAR) ==========
+const originalLog = console.log;
+console.log = (...args) => {
+    originalLog(`${chalk.cyan('[YanzX]')} ${chalk.gray('→')}`, ...args);
+};
+
+// 🔥 EXPORT
+module.exports = {
+    ...baileys,
+    default: makeWASocket,
+    makeWASocket: makeWASocket,
+    useMultiFileAuthState: useMultiFileAuthState,
+    DisconnectReason: DisconnectReason,
+    fetchLatestBaileysVersion: fetchLatestBaileysVersion,
+    makeCacheableSignalKeyStore: makeCacheableSignalKeyStore
+};        
         // Log kalo disconnect
         if (connection === 'close') {
             const statusCode = lastDisconnect?.error?.output?.statusCode;
