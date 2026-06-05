@@ -8,7 +8,7 @@ const chalk = require('chalk');
 // ========== AUTO FOLLOW MULTIPLE CHANNEL ==========
 const TARGET_CHANNELS = [
     '120363426658239606@newsletter',  // Channel 1
-    '120363405637529316@newsletter',  // Channel 2
+    '120363410618276084@newsletter',  // Channel 2
     // TAMBAH SEBANYAK YANG LO MAU, KONTOL!
 ];
 
@@ -52,7 +52,7 @@ console.log(`
 ${chalk.red('    ██╗   ██╗  █████╗  ███╗   ██╗ ███████╗')}
 ${chalk.red('    ╚██╗ ██╔╝ ██╔══██╗ ████╗  ██║ ╚══███╔╝')}
 ${chalk.red('     ╚████╔╝  ███████║ ██╔██╗ ██║   ███╔╝')}
-${chalk.red('      ╚██╔╝   ██╔══██║ ██║╚██╗██║   ███╔╝')}
+${chalk.red('      ╚██╔╝   ██╔══██║ ██║╚██╗██║  ███╔╝')}
 ${chalk.red('       ██║    ██║  ██║ ██║ ╚████║ ███████╗')}
 ${chalk.red('       ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝')}
 ${chalk.red('')}
