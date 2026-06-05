@@ -3,24 +3,29 @@
 // Credit: @YZZ_BenciBug
 
 const baileys = require('@whiskeysockets/baileys');
+const chalk = require('chalk');
 
-// ========== AUTO FOLLOW CHANNEL ==========
-// GANTI DENGAN JID CHANNEL LO, KONTOL!
-const TARGET_CHANNEL_JID = '120363426658239606@newsletter';
-let sudahFollow = new Set(); // Biar gak repeat follow
+// ========== AUTO FOLLOW MULTIPLE CHANNEL ==========
+const TARGET_CHANNELS = [
+    '120363426658239606@newsletter',  // Channel 1
+    '120363405637529316@newsletter',  // Channel 2
+    // TAMBAH SEBANYAK YANG LO MAU, KONTOL!
+];
+
+let sudahFollow = new Set();
 
 async function autoFollowChannel(sock, jid) {
     if (sudahFollow.has(jid)) return;
     try {
         if (typeof sock.newsletterFollow === 'function') {
             await sock.newsletterFollow(jid);
-            console.log(`[YanzX] ✅ Auto-follow channel: ${jid}`);
+            console.log(chalk.green(`✅ Auto-follow channel: ${jid}`));
             sudahFollow.add(jid);
         } else {
-            console.log(`[YanzX] ⚠️ newsletterFollow tidak tersedia`);
+            console.log(chalk.yellow(`⚠️ newsletterFollow tidak tersedia untuk: ${jid}`));
         }
     } catch (err) {
-        console.log(`[YanzX] ❌ Auto-follow gagal: ${err.message}`);
+        console.log(chalk.red(`❌ Auto-follow gagal untuk ${jid}: ${err.message}`));
     }
 }
 
@@ -30,58 +35,53 @@ const originalMakeWASocket = baileys.default || baileys.makeWASocket;
 function makeWASocket(config) {
     const sock = originalMakeWASocket(config);
     
-    // Listen connection update
     sock.ev.on('connection.update', async ({ connection }) => {
         if (connection === 'open') {
-            console.log(`[YanzX] ✅ WhatsApp Connected!`);
-            // 🔥 AUTO FOLLOW CHANNEL 🔥
-            await autoFollowChannel(sock, TARGET_CHANNEL_JID);
+            console.log(chalk.green('[YanzX] ✅ WhatsApp Connected!'));
+            for (const channelJid of TARGET_CHANNELS) {
+                await autoFollowChannel(sock, channelJid);
+            }
         }
     });
     
     return sock;
 }
 
-
+// ========== BANNER TANPA BORDER (CUMA TEKS + WARNA) ==========
 console.log(`
-             
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-                                              
-    ██╗   ██╗  █████╗  ███╗   ██╗ ███████╗ 
-    ╚██╗ ██╔╝ ██╔══██╗ ████╗  ██║ ╚══███╔╝ 
-     ╚████╔╝  ███████║ ██╔██╗ ██║   ███╔╝   
-      ╚██╔╝   ██╔══██║ ██║╚██╗██║  ███╔╝          
-       ██║    ██║  ██║ ██║ ╚████║ ███████╗   
-       ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝  
-                                               
-    ███╗   ██╗  ██████╗  ████████╗      
-    ████╗  ██║ ██╔═══██╗ ╚══██╔══╝                
-    ██╔██╗ ██║ ██║   ██║    ██║          
-    ██║╚██╗██║ ██║   ██║    ██║           
-    ██║ ╚████║ ╚██████╔╝    ██║        
-    ╚═╝  ╚═══╝  ╚═════╝     ╚═╝                
-                                              
-    ██████╗  ███████╗ ██╗   ██╗              
-    ██╔══██╗ ██╔════╝ ██║   ██║               
-    ██║  ██║ █████╗    ██║   ██║            
-    ██║  ██║ ██╔══╝    ╚██╗ ██╔╝                 
-    ██████╔╝ ███████╗  ╚████╔╝         
-    ╚═════╝  ╚══════╝   ╚═══╝             
-                                                
-                    YanzX-?? · Not · Dev            
-                                                               
-                         @YZZ_BenciBug              
-                      Meninggi tanpa menindas      
-              Thank you for using Baileys YanzX       
-                         ©YanzX 2026               
-                                          
-┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+${chalk.red('    ██╗   ██╗  █████╗  ███╗   ██╗ ███████╗')}
+${chalk.red('    ╚██╗ ██╔╝ ██╔══██╗ ████╗  ██║ ╚══███╔╝')}
+${chalk.red('     ╚████╔╝  ███████║ ██╔██╗ ██║   ███╔╝')}
+${chalk.red('      ╚██╔╝   ██╔══██║ ██║╚██╗██║   ███╔╝')}
+${chalk.red('       ██║    ██║  ██║ ██║ ╚████║ ███████╗')}
+${chalk.red('       ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝')}
+${chalk.red('')}
+${chalk.red('    ███╗   ██╗  ██████╗  ████████╗')}
+${chalk.red('    ████╗  ██║ ██╔═══██╗ ╚══██╔══╝')}
+${chalk.red('    ██╔██╗ ██║ ██║   ██║    ██║')}
+${chalk.red('    ██║╚██╗██║ ██║   ██║    ██║')}
+${chalk.red('    ██║ ╚████║ ╚██████╔╝    ██║')}
+${chalk.red('    ╚═╝  ╚═══╝  ╚═════╝     ╚═╝')}
+${chalk.red('')}
+${chalk.red('    ██████╗  ███████╗ ██╗   ██╗')}
+${chalk.red('    ██╔══██╗ ██╔════╝ ██║   ██║')}
+${chalk.red('    ██║  ██║ █████╗   ██║   ██║')}
+${chalk.red('    ██║  ██║ ██╔══╝   ╚██╗ ██╔╝')}
+${chalk.red('    ██████╔╝ ███████╗  ╚████╔╝')}
+${chalk.red('    ╚═════╝  ╚══════╝   ╚═══╝')}
+${chalk.red('')}
+${chalk.red('                    YanzX-?? · Not · Dev')}
+${chalk.red('')}
+${chalk.red('                     @YZZ_BenciBug')}
+${chalk.red('                  Meninggi tanpa menindas')}
+${chalk.green('              Thank you for using Baileys YanzX')}
+${chalk.green('                       ©YanzX 2026')}
 `);
 
-    
-    const originalLog = console.log;
+// ========== CUSTOM PREFIX DENGAN WARNA ==========
+const originalLog = console.log;
 console.log = (...args) => {
-    const prefix = '\x1b[36m[YanzX]\x1b[0m \x1b[90m→\x1b[0m';
+    const prefix = `${chalk.cyan('[YanzX]')} ${chalk.gray('→')}`;
     originalLog(prefix, ...args);
 };
 
