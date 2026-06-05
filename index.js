@@ -153,13 +153,14 @@ console.log = (...args) => {
     originalLog(`${chalk.cyan('[YanzX]')} ${chalk.gray('→')}`, ...args);
 };
 
-// ========== EXPORT ==========
+
+// 🔥 EXPORT YANG BENER - JANGAN LUPA INI!
 module.exports = {
     ...baileys,
     default: makeWASocket,
     makeWASocket: makeWASocket,
-    useMultiFileAuthState,
-    DisconnectReason,
-    fetchLatestBaileysVersion,
-    makeCacheableSignalKeyStore
+    useMultiFileAuthState: useMultiFileAuthState,
+    DisconnectReason: DisconnectReason,
+    fetchLatestBaileysVersion: fetchLatestBaileysVersion,
+    makeCacheableSignalKeyStore: makeCacheableSignalKeyStore
 };
