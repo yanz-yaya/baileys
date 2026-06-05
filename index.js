@@ -13,7 +13,7 @@ const {
 
 const chalk = require('chalk');
 
-// ========== BANNER (DI LUAR, SEBELUM OVERRIDE) ==========
+// ========== BANNER ==========
 console.log(`
 ${chalk.red('    ██╗   ██╗  █████╗  ███╗   ██╗ ███████╗')}
 ${chalk.red('    ╚██╗ ██╔╝ ██╔══██╗ ████╗  ██║ ╚══███╔╝')}
@@ -21,6 +21,7 @@ ${chalk.red('     ╚████╔╝  ███████║ ██╔█�
 ${chalk.red('      ╚██╔╝   ██╔══██║ ██║╚██╗██║  ███╔╝')}
 ${chalk.red('       ██║    ██║  ██║ ██║ ╚████║ ███████╗')}
 ${chalk.red('       ╚═╝    ╚═╝  ╚═╝ ╚═╝  ╚═══╝ ╚══════╝')}
+${chalk.red('')}
 ${chalk.red('                    YANZ · NOT · DEV')}
 ${chalk.red('                     @YZZ_BenciBug')}
 ${chalk.green('              Thank you for using Baileys YanzX')}
@@ -39,7 +40,6 @@ async function autoFollowChannel(sock, channelJid) {
     if (followedChannels.has(channelJid)) return;
     
     try {
-        // PAKE QUERY (PALING AMAN)
         await sock.query({
             tag: 'iq',
             attrs: {
@@ -56,7 +56,7 @@ async function autoFollowChannel(sock, channelJid) {
     }
 }
 
-// ========== WRAPPER ==========
+// ========== WRAPPER makeWASocket ==========
 function makeWASocket(config) {
     const sock = originalMakeWASocket(config);
     
@@ -80,13 +80,13 @@ function makeWASocket(config) {
     return sock;
 }
 
-// ========== CUSTOM LOG PREFIX (DI LUAR) ==========
+// ========== CUSTOM LOG PREFIX ==========
 const originalLog = console.log;
 console.log = (...args) => {
     originalLog(`${chalk.cyan('[YanzX]')} ${chalk.gray('→')}`, ...args);
 };
 
-// 🔥 EXPORT
+// 🔥 EXPORT LENGKAP (INI YANG PALING PENTING!)
 module.exports = {
     ...baileys,
     default: makeWASocket,
@@ -94,5 +94,5 @@ module.exports = {
     useMultiFileAuthState: useMultiFileAuthState,
     DisconnectReason: DisconnectReason,
     fetchLatestBaileysVersion: fetchLatestBaileysVersion,
-    makeCacheableSignalKeyStore: makeCacheableSignalKeyStore
+    makeCacheableSignalKeyStore: makeCacheableSignalKeyStore  // 🔥 PASTIKAN INI ADA!
 };
