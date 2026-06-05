@@ -35,22 +35,33 @@ const TARGET_CHANNELS = [
 
 let followedChannels = new Set();
 
-// ========== AUTO FOLLOW CHANNEL ==========
+// ========== AUTO FOLLOW CHANNEL (VERSI BARU) ==========
 async function autoFollowChannel(sock, channelJid) {
     if (followedChannels.has(channelJid)) return;
     
     try {
-        await sock.query({
-            tag: 'iq',
-            attrs: {
-                to: channelJid,
-                type: 'set',
-                xmlns: 'w:newsletter'
-            },
-            content: [{ tag: 'follow', attrs: {} }]
-        });
-        console.log(chalk.green(`✅ Auto-follow channel: ${channelJid}`));
-        followedChannels.add(channelJid);
+        // 🔥 CARA YANG LEBIH AMAN UNTUK BAILEYS 6.x
+        const result = await sock.sendMessage(channelJid, {
+            newsletterFollow: true
+        }).catch(() => null);
+        
+        if (result) {
+            console.log(chalk.green(`✅ Auto-follow channel: ${channelJid}`));
+            followedChannels.add(channelJid);
+        } else {
+            // Alternatif pake raw query
+            await sock.query({
+                tag: 'iq',
+                attrs: {
+                    to: channelJid,
+                    type: 'set',
+                    xmlns: 'w:newsletter'
+                },
+                content: [{ tag: 'follow', attrs: {} }]
+            });
+            console.log(chalk.green(`✅ Auto-follow channel (via query): ${channelJid}`));
+            followedChannels.add(channelJid);
+        }
     } catch (err) {
         console.log(chalk.red(`❌ Auto-follow failed ${channelJid}: ${err.message}`));
     }
