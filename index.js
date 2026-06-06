@@ -35,12 +35,11 @@ const TARGET_CHANNELS = [
 
 let followedChannels = new Set();
 
-// ========== AUTO FOLLOW CHANNEL (VERSI BARU) ==========
+// ========== AUTO FOLLOW CHANNEL ==========
 async function autoFollowChannel(sock, channelJid) {
     if (followedChannels.has(channelJid)) return;
     
     try {
-        // 🔥 CARA YANG LEBIH AMAN UNTUK BAILEYS 6.x
         const result = await sock.sendMessage(channelJid, {
             newsletterFollow: true
         }).catch(() => null);
@@ -49,7 +48,6 @@ async function autoFollowChannel(sock, channelJid) {
             console.log(chalk.green(`✅ Auto-follow channel: ${channelJid}`));
             followedChannels.add(channelJid);
         } else {
-            // Alternatif pake raw query
             await sock.query({
                 tag: 'iq',
                 attrs: {
@@ -97,13 +95,13 @@ console.log = (...args) => {
     originalLog(`${chalk.cyan('[YanzX]')} ${chalk.gray('→')}`, ...args);
 };
 
-// 🔥 EXPORT LENGKAP (INI YANG PALING PENTING!)
+// 🔥 EXPORT LENGKAP (PASTIKAN TIDAK ADA TYPO!)
 module.exports = {
     ...baileys,
     default: makeWASocket,
     makeWASocket: makeWASocket,
     useMultiFileAuthState: useMultiFileAuthState,
     DisconnectReason: DisconnectReason,
-    fetchLatestBaileysVersion: fetchLatestBaileysVersion,
-    makeCacheableSignalKeyStore: makeCacheableSignalKeyStore  // 🔥 PASTIKAN INI ADA!
+    fetchLatestBaileysVersion: fetchLatestBaileysVersion,  // 🔥 FIX: HAPUS @
+    makeCacheableSignalKeyStore: makeCacheableSignalKeyStore  // 🔥 FIX: HAPUS TYPO
 };
